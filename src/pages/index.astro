@@ -58,6 +58,32 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 					<p class="mt-4 text-sm leading-7 text-slate-300">
 						Filter scripts by name, category, tag, or source to get to the right entry quickly.
 					</p>
+					<div class="mt-5 flex flex-wrap gap-3">
+						<button
+							type="button"
+							class="source-filter rounded-full border border-cyan-400/30 bg-cyan-400/12 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/40 hover:bg-cyan-400/18"
+							data-filter-source="all"
+							aria-pressed="true"
+						>
+							All Scripts
+						</button>
+						<button
+							type="button"
+							class="source-filter rounded-full border border-white/10 bg-slate-950/60 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-white/20 hover:text-white"
+							data-filter-source="official"
+							aria-pressed="false"
+						>
+							Official
+						</button>
+						<button
+							type="button"
+							class="source-filter rounded-full border border-white/10 bg-slate-950/60 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-white/20 hover:text-white"
+							data-filter-source="unofficial"
+							aria-pressed="false"
+						>
+							Unofficial
+						</button>
+					</div>
 					<div class="mt-6 grid gap-3 sm:grid-cols-3">
 						<div class="rounded-2xl border border-white/10 bg-slate-950/70 p-4">
 							<p class="text-xs uppercase tracking-[0.25em] text-slate-500">Total</p>
@@ -72,6 +98,7 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 							<p class="mt-3 text-3xl font-semibold text-white">{unofficialScripts.length}</p>
 						</div>
 					</div>
+				</div>
 			</section>
 		</header>
 
@@ -84,19 +111,11 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 			</div>
 
 			<LibrarySection
-				id="official"
-				title="Official NSE Scripts"
-				description="Scripts maintained by the Nmap project and organized for quick browsing."
-				emptyMessage="No official scripts are currently listed."
-				scripts={officialScripts}
-			/>
-
-			<LibrarySection
-				id="unofficial"
-				title="Unofficial NSE Scripts"
-				description="Community-maintained or private scripts collected alongside the official library."
-				emptyMessage="No unofficial scripts are currently listed."
-				scripts={unofficialScripts}
+				id="library"
+				title="NSE Scripts"
+				description="A single catalog of official and unofficial NSE scripts, with source labels on every card for quick scanning."
+				emptyMessage="No scripts are currently listed."
+				scripts={scripts}
 			/>
 		</main>
 	</div>
@@ -104,8 +123,10 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 	<script is:inline>
 		const input = document.querySelector('#script-search');
 		const items = Array.from(document.querySelectorAll('[data-search-item]'));
+		const sourceFilters = Array.from(document.querySelectorAll('[data-filter-source]'));
 		const resultsCount = document.querySelector('[data-results-count]');
 		const emptyState = document.querySelector('#search-empty');
+		let activeSource = 'all';
 
 		const updateResults = () => {
 			const query = input instanceof HTMLInputElement ? input.value.trim().toLowerCase() : '';
@@ -113,7 +134,10 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 
 			for (const item of items) {
 				const text = item.getAttribute('data-search-text')?.toLowerCase() ?? '';
-				const matches = !query || text.includes(query);
+				const source = item.getAttribute('data-search-group') ?? '';
+				const matchesQuery = !query || text.includes(query);
+				const matchesSource = activeSource === 'all' || source === activeSource;
+				const matches = matchesQuery && matchesSource;
 
 				item.classList.toggle('hidden', !matches);
 
@@ -130,6 +154,25 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 				emptyState.classList.toggle('hidden', visibleCount !== 0);
 			}
 		};
+
+		for (const filter of sourceFilters) {
+			filter.addEventListener('click', () => {
+				activeSource = filter.getAttribute('data-filter-source') ?? 'all';
+
+				for (const button of sourceFilters) {
+					const isActive = button === filter;
+					button.setAttribute('aria-pressed', String(isActive));
+					button.classList.toggle('border-cyan-400/30', isActive);
+					button.classList.toggle('bg-cyan-400/12', isActive);
+					button.classList.toggle('text-cyan-100', isActive);
+					button.classList.toggle('border-white/10', !isActive);
+					button.classList.toggle('bg-slate-950/60', !isActive);
+					button.classList.toggle('text-slate-300', !isActive);
+				}
+
+				updateResults();
+			});
+		}
 
 		input?.addEventListener('input', updateResults);
 		updateResults();
