@@ -19,43 +19,32 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 	<div class="relative overflow-hidden">
 		<div class="absolute inset-x-0 top-0 -z-10 h-[28rem] bg-[radial-gradient(circle_at_top,_rgba(125,211,252,0.12),_transparent_60%)]"></div>
 
-		<header class="mx-auto max-w-7xl px-6 pb-16 pt-8 sm:px-8 lg:px-10">
-			<nav class="flex items-center justify-between rounded-full border border-white/10 bg-slate-950/60 px-5 py-3 backdrop-blur">
-				<a class="text-sm font-semibold tracking-[0.3em] text-cyan-100 uppercase" href="/">
-					NSE Library
-				</a>
-				<div class="flex items-center gap-4 text-sm text-slate-300">
-					<a class="transition hover:text-white" href="#official">Official</a>
-					<a class="transition hover:text-white" href="#unofficial">Unofficial</a>
-				</div>
-			</nav>
-
-			<section class="pb-16 pt-16">
+		<header class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:px-8 lg:px-10">
+			<section class="pb-8">
 				<div class="w-full">
-					<p class="text-xs uppercase tracking-[0.4em] text-cyan-200/80">Static Astro Catalog</p>
+					<p class="text-xs uppercase tracking-[0.4em] text-cyan-200/80">Nmap Script Reference</p>
 					<h1 class="mt-6 text-5xl font-semibold tracking-tight text-white sm:text-6xl">
-						A practical library for browsing Nmap NSE scripts without the clutter.
+						Browse Nmap NSE scripts in a faster, cleaner reference library.
 					</h1>
 					<p class="mt-6 text-base leading-8 text-slate-300">
-						Start with a curated, static library split between official Nmap scripts and
-						community-maintained ones. This first version ships with mock content and a single
-						script entry so we can grow the structure in the right direction.
+						Explore official Nmap scripts and community-maintained entries through a focused,
+						searchable interface built for quick lookup, comparison, and discovery.
 					</p>
 
 					<div class="mt-8 flex flex-wrap gap-3 text-sm text-slate-200">
 						<span class="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2">
-							Static output
+							Official + community scripts
 						</span>
 						<span class="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-2">
-							Official + unofficial split
+							Searchable reference
 						</span>
 						<span class="rounded-full border border-white/10 bg-white/5 px-4 py-2">
-							Search-ready structure
+							Static by design
 						</span>
-						</div>
 					</div>
+				</div>
 				<div class="mt-10 w-full rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-[0_24px_80px_rgba(2,6,23,0.4)] backdrop-blur">
-					<p class="text-xs uppercase tracking-[0.35em] text-slate-400">Quick Search</p>
+					<p class="text-xs uppercase tracking-[0.35em] text-slate-400">Search Scripts</p>
 					<label class="mt-4 block">
 						<span class="sr-only">Search scripts</span>
 						<input
@@ -66,8 +55,7 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 						/>
 					</label>
 					<p class="mt-4 text-sm leading-7 text-slate-300">
-						The filter works client-side on this static page and is already wired for future
-						script entries.
+						Filter scripts by name, category, tag, or source to get to the right entry quickly.
 					</p>
 					<div class="mt-6 grid gap-3 sm:grid-cols-3">
 						<div class="rounded-2xl border border-white/10 bg-slate-950/70 p-4">
@@ -86,27 +74,27 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 			</section>
 		</header>
 
-		<main class="mx-auto max-w-7xl space-y-20 px-6 pb-24 sm:px-8 lg:px-10">
+		<main class="mx-auto max-w-7xl space-y-16 px-6 pb-24 sm:px-8 lg:px-10">
 			<div
 				id="search-empty"
 				class="hidden rounded-[2rem] border border-dashed border-white/15 bg-white/5 p-6 text-sm text-slate-300"
 			>
-				No scripts match the current search yet.
+				No scripts match your current search.
 			</div>
 
 			<LibrarySection
 				id="official"
 				title="Official NSE Scripts"
-				description="Scripts maintained by the Nmap project. This section starts with one mock entry so the content and routing structure are in place."
-				emptyMessage="No official scripts have been added yet."
+				description="Scripts maintained by the Nmap project and organized for quick browsing."
+				emptyMessage="No official scripts are currently listed."
 				scripts={officialScripts}
 			/>
 
 			<LibrarySection
 				id="unofficial"
 				title="Unofficial NSE Scripts"
-				description="Space for community or internally maintained NSE scripts. The section is already available even before any entries are added."
-				emptyMessage="No unofficial scripts have been added yet."
+				description="Community-maintained or private scripts collected alongside the official library."
+				emptyMessage="No unofficial scripts are currently listed."
 				scripts={unofficialScripts}
 			/>
 		</main>

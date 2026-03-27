@@ -25,4 +25,4 @@ lastReviewed: "2026-03-27"
 
 It checks known paths and fingerprints, then highlights matches that often indicate admin portals, diagnostic endpoints, CMS installs, or default application scaffolding.
 
-For the library MVP, this entry acts as the mock example of an **official** NSE script sourced from Nmap.
+It is commonly used during early web enumeration to surface interesting paths before moving into more targeted assessment.
