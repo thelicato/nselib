@@ -1,10 +1,19 @@
 @import "tailwindcss";
 
+@font-face {
+	font-family: "Obviously";
+	src: url("/fonts/Obviously.woff2") format("woff2");
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+}
+
 @theme {
 	--font-sans:
 		"Plus Jakarta Sans", "Avenir Next", "Segoe UI", sans-serif;
 	--font-brand:
-		"Avenir Next Condensed", "Franklin Gothic Demi Cond", "Trebuchet MS", sans-serif;
+		"Obviously", "Avenir Next Condensed", "Franklin Gothic Demi Cond", "Trebuchet MS",
+		sans-serif;
 }
 
 html {
@@ -40,6 +49,10 @@ a {
 	font-weight: 700;
 	letter-spacing: 0.18em;
 	text-transform: uppercase;
+}
+
+.hero-display {
+	font-family: "Obviously", var(--font-sans);
 }
 
 #search-panel {
