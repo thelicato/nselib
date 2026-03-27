@@ -18,7 +18,7 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 	description="Search and browse official and unofficial Nmap NSE scripts in a static Astro library."
 >
 	<div class="relative overflow-hidden">
-		<div class="absolute inset-x-0 top-0 -z-10 h-[28rem] bg-[radial-gradient(circle_at_top,_rgba(125,211,252,0.12),_transparent_60%)]"></div>
+		<div class="absolute inset-x-0 top-0 -z-10 h-112 bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.12),transparent_60%)]"></div>
 
 		<header class="mx-auto max-w-7xl px-6 pb-8 pt-8 sm:px-8 lg:px-10">
 			<section class="pb-8">
@@ -44,8 +44,19 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 						</span>
 					</div>
 				</div>
-				<div class="mt-10 w-full rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-[0_24px_80px_rgba(2,6,23,0.4)] backdrop-blur">
-					<p class="text-xs uppercase tracking-[0.35em] text-slate-400">Search Scripts</p>
+				<div
+					id="search-panel"
+					class="mt-10 w-full rounded-4xl border border-white/10 bg-white/5 p-6 shadow-[0_24px_80px_rgba(2,6,23,0.4)] backdrop-blur"
+				>
+					<div class="flex flex-wrap items-center justify-between gap-3">
+						<p class="text-xs uppercase tracking-[0.35em] text-slate-400">Search Scripts</p>
+						<div class="flex flex-wrap gap-2 text-xs text-slate-400">
+							<span class="rounded-full border border-white/10 bg-slate-950/60 px-3 py-1">/</span>
+							<span class="rounded-full border border-white/10 bg-slate-950/60 px-3 py-1">
+								Ctrl/Cmd + K
+							</span>
+						</div>
+					</div>
 					<label class="mt-4 block">
 						<span class="sr-only">Search scripts</span>
 						<input
@@ -105,7 +116,7 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 		<main class="mx-auto max-w-7xl space-y-16 px-6 pb-24 sm:px-8 lg:px-10">
 			<div
 				id="search-empty"
-				class="hidden rounded-[2rem] border border-dashed border-white/15 bg-white/5 p-6 text-sm text-slate-300"
+				class="hidden rounded-4xl border border-dashed border-white/15 bg-white/5 p-6 text-sm text-slate-300"
 			>
 				No scripts match your current search.
 			</div>
@@ -122,11 +133,27 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 
 	<script is:inline>
 		const input = document.querySelector('#script-search');
+		const searchPanel = document.querySelector('#search-panel');
 		const items = Array.from(document.querySelectorAll('[data-search-item]'));
 		const sourceFilters = Array.from(document.querySelectorAll('[data-filter-source]'));
 		const resultsCount = document.querySelector('[data-results-count]');
 		const emptyState = document.querySelector('#search-empty');
 		let activeSource = 'all';
+
+		const focusSearch = () => {
+			if (!(input instanceof HTMLInputElement)) {
+				return;
+			}
+
+			if (searchPanel instanceof HTMLElement) {
+				const topOffset = 16;
+				const panelTop = searchPanel.getBoundingClientRect().top + window.scrollY - topOffset;
+				window.scrollTo({ top: Math.max(panelTop, 0), behavior: 'smooth' });
+			}
+
+			input.focus();
+			input.select();
+		};
 
 		const updateResults = () => {
 			const query = input instanceof HTMLInputElement ? input.value.trim().toLowerCase() : '';
@@ -154,6 +181,34 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 				emptyState.classList.toggle('hidden', visibleCount !== 0);
 			}
 		};
+
+		document.addEventListener('keydown', (event) => {
+			if (!(input instanceof HTMLInputElement)) {
+				return;
+			}
+
+			const target = event.target;
+			const isTypingTarget =
+				target instanceof HTMLInputElement ||
+				target instanceof HTMLTextAreaElement ||
+				target instanceof HTMLSelectElement ||
+				(target instanceof HTMLElement && target.isContentEditable);
+
+			const pressedSlash = event.key === '/' && !event.metaKey && !event.ctrlKey && !event.altKey;
+			const pressedCommandPalette =
+				event.key.toLowerCase() === 'k' && (event.metaKey || event.ctrlKey);
+
+			if (!pressedSlash && !pressedCommandPalette) {
+				return;
+			}
+
+			if (isTypingTarget && target !== input) {
+				return;
+			}
+
+			event.preventDefault();
+			focusSearch();
+		});
 
 		for (const filter of sourceFilters) {
 			filter.addEventListener('click', () => {

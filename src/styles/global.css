@@ -9,6 +9,7 @@
 
 html {
 	scroll-behavior: smooth;
+	scroll-padding-top: 1rem;
 }
 
 body {
@@ -39,4 +40,8 @@ a {
 	font-weight: 700;
 	letter-spacing: 0.18em;
 	text-transform: uppercase;
+}
+
+#search-panel {
+	scroll-margin-top: 1rem;
 }
