@@ -1,0 +1,116 @@
+---
+import { getCollection, render } from 'astro:content';
+
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+	const scripts = await getCollection('scripts');
+
+	return scripts.map((script) => ({
+		params: { slug: script.id },
+		props: { script }
+	}));
+}
+
+const { script } = Astro.props;
+const { Content } = await render(script);
+
+const riskTone = {
+	safe: 'border-emerald-400/30 bg-emerald-400/10 text-emerald-100',
+	informational: 'border-sky-400/30 bg-sky-400/10 text-sky-100',
+	intrusive: 'border-amber-400/30 bg-amber-400/10 text-amber-100'
+}[script.data.risk];
+
+const sourceLabel = script.data.source === 'official' ? 'Official' : 'Unofficial';
+---
+
+<Layout
+	title={`${script.data.title} | NSE Library`}
+	description={script.data.shortDescription}
+>
+	<div class="mx-auto max-w-5xl px-6 py-8 sm:px-8 lg:px-10">
+		<a class="inline-flex items-center gap-2 text-sm text-cyan-200 transition hover:text-cyan-100" href="/">
+			<span aria-hidden="true"><-</span>
+			Back to library
+		</a>
+
+		<section class="mt-8 rounded-[2.25rem] border border-white/10 bg-white/5 p-8 shadow-[0_24px_80px_rgba(2,6,23,0.4)] backdrop-blur">
+			<div class="flex flex-wrap items-center gap-3">
+				<span class="rounded-full border border-white/10 bg-slate-950/70 px-3 py-1 text-xs uppercase tracking-[0.3em] text-slate-300">
+					{sourceLabel}
+				</span>
+				<span class={`rounded-full border px-3 py-1 text-xs font-medium ${riskTone}`}>
+					{script.data.risk}
+				</span>
+				<span class="rounded-full border border-white/10 bg-slate-950/70 px-3 py-1 text-xs text-slate-300">
+					{script.data.category}
+				</span>
+			</div>
+
+			<h1 class="mt-6 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+				{script.data.title}
+			</h1>
+			<p class="mt-5 max-w-3xl text-base leading-8 text-slate-300">
+				{script.data.shortDescription}
+			</p>
+
+			<div class="mt-8 grid gap-4 md:grid-cols-3">
+				<div class="rounded-2xl border border-white/10 bg-slate-950/70 p-5">
+					<p class="text-xs uppercase tracking-[0.25em] text-slate-500">Ports</p>
+					<p class="mt-3 text-lg text-white">{script.data.ports.join(', ') || 'Any'}</p>
+				</div>
+				<div class="rounded-2xl border border-white/10 bg-slate-950/70 p-5">
+					<p class="text-xs uppercase tracking-[0.25em] text-slate-500">Protocols</p>
+					<p class="mt-3 text-lg text-white">{script.data.protocols.join(', ') || 'n/a'}</p>
+				</div>
+				<div class="rounded-2xl border border-white/10 bg-slate-950/70 p-5">
+					<p class="text-xs uppercase tracking-[0.25em] text-slate-500">Last Reviewed</p>
+					<p class="mt-3 text-lg text-white">{script.data.lastReviewed}</p>
+				</div>
+			</div>
+		</section>
+
+		<div class="mt-8 grid gap-8 lg:grid-cols-[1.3fr_0.7fr]">
+			<article class="rounded-[2rem] border border-white/10 bg-white/5 p-8 shadow-[0_24px_80px_rgba(2,6,23,0.32)] backdrop-blur">
+				<h2 class="text-2xl font-semibold text-white">Overview</h2>
+				<div class="content-copy mt-6 max-w-none text-slate-300">
+					<Content />
+				</div>
+			</article>
+
+			<aside class="space-y-6">
+				<section class="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-[0_24px_80px_rgba(2,6,23,0.32)] backdrop-blur">
+					<h2 class="text-xl font-semibold text-white">Usage</h2>
+					<pre class="mt-4 overflow-x-auto rounded-2xl border border-white/10 bg-slate-950/80 p-4 text-sm leading-7 text-cyan-100"><code>{script.data.usage}</code></pre>
+				</section>
+
+				<section class="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-[0_24px_80px_rgba(2,6,23,0.32)] backdrop-blur">
+					<h2 class="text-xl font-semibold text-white">Tags</h2>
+					<div class="mt-4 flex flex-wrap gap-2">
+						{script.data.tags.map((tag) => (
+							<span class="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs text-cyan-100">
+								#{tag}
+							</span>
+						))}
+					</div>
+				</section>
+
+				<section class="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-[0_24px_80px_rgba(2,6,23,0.32)] backdrop-blur">
+					<h2 class="text-xl font-semibold text-white">Output Preview</h2>
+					<ul class="mt-4 space-y-3 text-sm leading-7 text-slate-300">
+						{script.data.outputPreview.map((line) => (
+							<li class="rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3">{line}</li>
+						))}
+					</ul>
+				</section>
+
+				<section class="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-[0_24px_80px_rgba(2,6,23,0.32)] backdrop-blur">
+					<h2 class="text-xl font-semibold text-white">Attribution</h2>
+					<p class="mt-4 text-sm leading-7 text-slate-300">
+						Author: {script.data.author}
+					</p>
+				</section>
+			</aside>
+		</div>
+	</div>
+</Layout>

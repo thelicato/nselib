@@ -1,0 +1,66 @@
+---
+import ScriptCard from './ScriptCard.astro';
+
+interface ScriptEntry {
+	id: string;
+	data: {
+		title: string;
+		source: 'official' | 'unofficial';
+		category: string;
+		shortDescription: string;
+		tags: string[];
+		ports: string[];
+		protocols: string[];
+	};
+}
+
+interface Props {
+	id: string;
+	title: string;
+	description: string;
+	emptyMessage: string;
+	scripts: ScriptEntry[];
+}
+
+const { id, title, description, emptyMessage, scripts } = Astro.props;
+---
+
+<section id={id} class="scroll-mt-24">
+	<div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+		<div class="max-w-2xl">
+			<p class="text-xs uppercase tracking-[0.35em] text-slate-400">Collection</p>
+			<h2 class="mt-3 text-3xl font-semibold text-white">{title}</h2>
+			<p class="mt-3 text-sm leading-7 text-slate-300">{description}</p>
+		</div>
+		<p class="text-sm text-slate-400">{scripts.length} script{scripts.length === 1 ? '' : 's'}</p>
+	</div>
+
+	{
+		scripts.length > 0 ? (
+			<div class="mt-8 grid gap-5 lg:grid-cols-2">
+				{scripts.map((script) => (
+					<div
+						data-search-item
+						data-search-text={`${script.data.title} ${script.data.shortDescription} ${script.data.category} ${script.data.tags.join(' ')} ${script.data.source}`}
+						data-search-group={script.data.source}
+					>
+						<ScriptCard
+							title={script.data.title}
+							href={`/scripts/${script.id}/`}
+							source={script.data.source}
+							category={script.data.category}
+							shortDescription={script.data.shortDescription}
+							tags={script.data.tags}
+							ports={script.data.ports}
+							protocols={script.data.protocols}
+						/>
+					</div>
+				))}
+			</div>
+		) : (
+			<div class="mt-8 rounded-[2rem] border border-dashed border-white/15 bg-white/5 p-6 text-sm text-slate-300">
+				{emptyMessage}
+			</div>
+		)
+	}
+</section>
