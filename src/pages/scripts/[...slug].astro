@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 
+import AppLogo from '../../components/AppLogo.astro';
 import Layout from '../../layouts/Layout.astro';
 
 export async function getStaticPaths() {
@@ -29,10 +30,23 @@ const sourceLabel = script.data.source === 'official' ? 'Official' : 'Unofficial
 	description={script.data.shortDescription}
 >
 	<div class="mx-auto max-w-7xl px-6 py-8 sm:px-8 lg:px-10">
-		<a class="inline-flex items-center gap-2 text-sm text-cyan-200 transition hover:text-cyan-100" href="/">
-			<span aria-hidden="true"><-</span>
-			Back to library
-		</a>
+		<div class="flex justify-center">
+			<AppLogo size="page" />
+		</div>
+
+		<div class="mt-8">
+			<a
+				class="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-medium text-slate-100 shadow-[0_12px_40px_rgba(2,6,23,0.25)] transition hover:border-cyan-300/30 hover:bg-cyan-400/10 hover:text-white"
+				href="/"
+			>
+				<span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-950/80 text-cyan-200" aria-hidden="true">
+					<svg viewBox="0 0 16 16" class="h-3.5 w-3.5 fill-none stroke-current" xmlns="http://www.w3.org/2000/svg">
+						<path d="M10.5 3.5L6 8L10.5 12.5" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"></path>
+					</svg>
+				</span>
+				Back to library
+			</a>
+		</div>
 
 		<section class="mt-8 rounded-[2.25rem] border border-white/10 bg-white/5 p-8 shadow-[0_24px_80px_rgba(2,6,23,0.4)] backdrop-blur">
 			<div class="flex flex-wrap items-center gap-3">

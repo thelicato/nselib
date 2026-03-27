@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 
+import AppLogo from '../components/AppLogo.astro';
 import LibrarySection from '../components/LibrarySection.astro';
 import Layout from '../layouts/Layout.astro';
 
@@ -19,19 +20,19 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 	<div class="relative overflow-hidden">
 		<div class="absolute inset-x-0 top-0 -z-10 h-[28rem] bg-[radial-gradient(circle_at_top,_rgba(125,211,252,0.12),_transparent_60%)]"></div>
 
-		<header class="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:px-8 lg:px-10">
+		<header class="mx-auto max-w-7xl px-6 pb-8 pt-8 sm:px-8 lg:px-10">
 			<section class="pb-8">
-				<div class="w-full">
-					<p class="text-xs uppercase tracking-[0.4em] text-cyan-200/80">Nmap Script Reference</p>
+				<div class="w-full text-center">
+					<AppLogo class="mx-auto" size="page" />
 					<h1 class="mt-6 text-5xl font-semibold tracking-tight text-white sm:text-6xl">
 						Browse Nmap NSE scripts in a faster, cleaner reference library.
 					</h1>
-					<p class="mt-6 text-base leading-8 text-slate-300">
+					<p class="mx-auto mt-6 max-w-3xl text-base leading-8 text-slate-300">
 						Explore official Nmap scripts and community-maintained entries through a focused,
 						searchable interface built for quick lookup, comparison, and discovery.
 					</p>
 
-					<div class="mt-8 flex flex-wrap gap-3 text-sm text-slate-200">
+					<div class="mt-8 flex flex-wrap justify-center gap-3 text-sm text-slate-200">
 						<span class="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2">
 							Official + community scripts
 						</span>

@@ -3,6 +3,8 @@
 @theme {
 	--font-sans:
 		"Plus Jakarta Sans", "Avenir Next", "Segoe UI", sans-serif;
+	--font-brand:
+		"Avenir Next Condensed", "Franklin Gothic Demi Cond", "Trebuchet MS", sans-serif;
 }
 
 html {
@@ -30,4 +32,11 @@ a {
 
 .content-copy strong {
 	color: white;
+}
+
+.brand-wordmark {
+	font-family: var(--font-brand);
+	font-weight: 700;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
 }
