@@ -1,25 +1,76 @@
 ---
-title: smb-os-discovery
+title: "smb-os-discovery"
 source: official
-category: Enumeration
-shortDescription: Extracts operating system, hostname, domain, and SMB metadata from reachable SMB services.
-risk: informational
+category: "Default"
+categories:
+  - "default"
+  - "discovery"
+  - "safe"
+shortDescription: "Attempts to determine the operating system, computer name, domain, workgroup, and current\ntime over the SMB protocol (ports 445 or 139).\nThis is done by starting a session with the anonymous\naccount (or with a proper user account, if one is given; it likely doesn't make\na difference); in response to a session starting, the server will send back all this\ninformation."
+risk: safe
 tags:
-  - smb
-  - windows
-  - os-detection
-protocols:
-  - tcp
-ports:
-  - "445"
-usage: nmap -p445 --script smb-os-discovery <target>
+  - "default"
+  - "discovery"
+  - "safe"
+  - "hostrule"
+scriptTypes:
+  - "hostrule"
+protocols: []
+ports: []
+usage: "nmap --script smb-os-discovery.nse -p445 127.0.0.1\nsudo nmap -sU -sS --script smb-os-discovery.nse -p U:137,T:139 127.0.0.1"
 outputPreview:
-  - "OS: Windows Server 2019 Standard 17763"
-  - "Computer name: FILESRV01"
-author: Nmap Project
-lastReviewed: "2026-03-27"
+  - "Host script results:"
+  - "| smb-os-discovery:"
+  - "|   OS: Windows Server (R) 2008 Standard 6001 Service Pack 1 (Windows Server (R) 2008 Standard 6.0)"
+  - "|   OS CPE: cpe:/o:microsoft:windows_2008::sp1"
+  - "|   Computer name: Sql2008"
+  - "|   NetBIOS computer name: SQL2008"
+author: "Nmap Project"
+reference:
+  label: "View Official Script Source"
+  url: "https://svn.nmap.org/nmap/scripts/smb-os-discovery.nse"
+documentationUrl: "https://nmap.org/nsedoc/scripts/smb-os-discovery.html"
 ---
 
-`smb-os-discovery` provides useful SMB metadata that can help identify the target platform and its role on the network.
+Attempts to determine the operating system, computer name, domain, workgroup, and current
+time over the SMB protocol (ports 445 or 139).
+This is done by starting a session with the anonymous
+account (or with a proper user account, if one is given; it likely doesn't make
+a difference); in response to a session starting, the server will send back all this
+information.
+The following fields may be included in the output, depending on the
+circumstances (e.g. the workgroup name is mutually exclusive with domain and forest
+names) and the information available:
 
-It is especially helpful when you want a quick host profile without relying solely on generic OS fingerprinting.
+ OS
+
+ Computer name
+
+ Domain name
+
+ Forest name
+
+ FQDN
+
+ NetBIOS computer name
+
+ NetBIOS domain name
+
+ Workgroup
+
+ System time
+
+Some systems, like Samba, will blank out their name (and only send their domain).
+Other systems (like embedded printers) will simply leave out the information. Other
+systems will blank out various pieces (some will send back 0 for the current
+time, for example).
+If this script is used in conjunction with version detection it can augment the
+standard nmap version detection information with data that this script has discovered.
+Retrieving the name and operating system of a server is a vital step in targeting
+an attack against it, and this script makes that retrieval easy. Additionally, if
+a penetration tester is choosing between multiple targets, the time can help identify
+servers that are being poorly maintained (for more information/random thoughts on
+using the time, see http://www.skullsecurity.org/blog/?p=76 .
+Although the standard smb* script arguments can be used,
+they likely won't change the outcome in any meaningful way. However, smbnoguest
+will speed up the script on targets that do not allow guest access.

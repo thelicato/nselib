@@ -1,25 +1,37 @@
 ---
-title: ftp-anon
+title: "ftp-anon"
 source: official
-category: Authentication
-shortDescription: Checks whether an FTP server accepts anonymous logins and reports the exposed access level.
-risk: informational
+category: "Default"
+categories:
+  - "default"
+  - "auth"
+  - "safe"
+shortDescription: "Checks if an FTP server allows anonymous logins."
+risk: safe
 tags:
-  - ftp
-  - authentication
-  - exposure
-protocols:
-  - tcp
-ports:
-  - "21"
-usage: nmap -p21 --script ftp-anon <target>
+  - "default"
+  - "auth"
+  - "safe"
+  - "portrule"
+scriptTypes:
+  - "portrule"
+protocols: []
+ports: []
+usage: "nmap -sV -sC <target>"
 outputPreview:
-  - "Anonymous FTP login allowed"
-  - "drwxr-xr-x incoming"
-author: Nmap Project
-lastReviewed: "2026-03-27"
+  - "PORT   STATE SERVICE"
+  - "21/tcp open  ftp"
+  - "| ftp-anon: Anonymous FTP login allowed (FTP code 230)"
+  - "| -rw-r--r--   1 1170     924            31 Mar 28  2001 .banner"
+  - "| d--x--x--x   2 root     root         1024 Jan 14  2002 bin"
+  - "| d--x--x--x   2 root     root         1024 Aug 10  1999 etc"
+author: "Nmap Project"
+reference:
+  label: "View Official Script Source"
+  url: "https://svn.nmap.org/nmap/scripts/ftp-anon.nse"
+documentationUrl: "https://nmap.org/nsedoc/scripts/ftp-anon.html"
 ---
 
-`ftp-anon` is commonly used to validate whether an FTP service is exposing public access without credentials.
-
-When anonymous login is enabled, the script can also reveal whether the accessible directories allow reading, writing, or both.
+Checks if an FTP server allows anonymous logins.
+If anonymous is allowed, gets a directory listing of the root directory
+and highlights writeable files.

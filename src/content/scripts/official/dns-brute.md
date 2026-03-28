@@ -1,26 +1,38 @@
 ---
-title: dns-brute
+title: "dns-brute"
 source: official
-category: Discovery
-shortDescription: Attempts common hostname guesses against a target domain to uncover subdomains quickly.
-risk: informational
+category: "Intrusive"
+categories:
+  - "intrusive"
+  - "discovery"
+shortDescription: "Attempts to enumerate DNS hostnames by brute force guessing of common\nsubdomains. With the dns-brute.srv argument, dns-brute will also\ntry to enumerate common DNS SRV records."
+risk: intrusive
 tags:
-  - dns
-  - discovery
-  - subdomains
-protocols:
-  - udp
-  - tcp
-ports:
-  - "53"
-usage: nmap --script dns-brute --script-args dns-brute.domain=example.com <target>
+  - "intrusive"
+  - "discovery"
+  - "prerule"
+  - "hostrule"
+scriptTypes:
+  - "prerule"
+  - "hostrule"
+protocols: []
+ports: []
+usage: "nmap --script dns-brute --script-args dns-brute.domain=foo.com,dns-brute.threads=6,dns-brute.hostlist=./hostfile.txt,newtargets -sS -p 80\nnmap --script dns-brute www.foo.com"
 outputPreview:
-  - "www.example.com: 203.0.113.10"
-  - "vpn.example.com: 203.0.113.24"
-author: Nmap Project
-lastReviewed: "2026-03-27"
+  - "Pre-scan script results:"
+  - "| dns-brute:"
+  - "|   DNS Brute-force hostnames"
+  - "|     www.foo.com - 127.0.0.1"
+  - "|     mail.foo.com - 127.0.0.2"
+  - "|     blog.foo.com - 127.0.1.3"
+author: "Nmap Project"
+reference:
+  label: "View Official Script Source"
+  url: "https://svn.nmap.org/nmap/scripts/dns-brute.nse"
+documentationUrl: "https://nmap.org/nsedoc/scripts/dns-brute.html"
 ---
 
-`dns-brute` helps identify likely subdomains by testing a built-in wordlist against a target domain.
-
-It is useful during early reconnaissance when you want a quick map of exposed services before moving into deeper validation.
+Attempts to enumerate DNS hostnames by brute force guessing of common
+subdomains. With the dns-brute.srv argument, dns-brute will also
+try to enumerate common DNS SRV records.
+Wildcard records are listed as "*A" and "*AAAA" for IPv4 and IPv6 respectively.
