@@ -1,8 +1,6 @@
 <h1 align="center">
     <br />
-    <img src="./public/logo.png" alt= "NSE Lib" width="200px">
-    <br />
-    <b>NSE Lib</b>
+    <img src="./logo.png" alt= "NSE Lib" width="300px">
 </h1>
 
 <p align="center">
