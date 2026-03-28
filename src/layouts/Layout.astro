@@ -4,12 +4,25 @@ import '../styles/global.css';
 interface Props {
 	title?: string;
 	description?: string;
+	ogType?: 'website' | 'article';
+	image?: string;
+	jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
 const {
 	title = 'NSE Library',
-	description = 'A static Astro library for browsing official and unofficial Nmap NSE scripts.'
+	description = 'Browse official and unofficial Nmap NSE scripts in a searchable static reference library.',
+	ogType = 'website',
+	image = '/logo.png',
+	jsonLd
 } = Astro.props;
+
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? 'https://www.nselib.com';
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
+const imageUrl = new URL(image, siteUrl).toString();
+const jsonLdPayload = jsonLd
+	? JSON.stringify(Array.isArray(jsonLd) ? jsonLd : [jsonLd])
+	: '';
 ---
 
 <!doctype html>
@@ -19,9 +32,25 @@ const {
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/png" href="/logo.png" />
 		<link rel="apple-touch-icon" href="/logo.png" />
+		<link rel="canonical" href={canonicalUrl} />
 		<meta name="generator" content={Astro.generator} />
 		<meta name="description" content={description} />
+		<meta name="robots" content="index, follow, max-image-preview:large" />
+		<meta name="theme-color" content="#020617" />
+		<meta property="og:site_name" content="NSE LIB" />
+		<meta property="og:locale" content="en_US" />
+		<meta property="og:type" content={ogType} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:image" content={imageUrl} />
+		<meta property="og:image:alt" content="NSE LIB logo" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={imageUrl} />
 		<title>{title}</title>
+		{jsonLdPayload && <script type="application/ld+json" set:html={jsonLdPayload} />}
 	</head>
 	<body class="min-h-screen bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.18),transparent_38%),linear-gradient(180deg,#020617_0%,#0f172a_45%,#020617_100%)]">
 		<slot />

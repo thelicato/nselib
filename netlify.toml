@@ -2,7 +2,7 @@
 
 [[redirects]]
   from = "https://nselib.netlify.app/*"
-  to = "https://nselib.com/:splat"
+  to = "https://www.nselib.com/:splat"
   status = 301
   force = true #COMMENT: ensure that we always redirect
 

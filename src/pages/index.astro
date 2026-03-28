@@ -12,11 +12,32 @@ const scripts = (await getCollection('scripts')).sort((a, b) =>
 
 const officialScripts = scripts.filter((script) => script.data.source === 'official');
 const unofficialScripts = scripts.filter((script) => script.data.source === 'unofficial');
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? 'https://www.nselib.com';
+const homeJsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'CollectionPage',
+	name: 'NSE LIB',
+	url: siteUrl,
+	description:
+		'Browse official and unofficial Nmap NSE scripts in a searchable static reference library.',
+	isPartOf: {
+		'@type': 'WebSite',
+		name: 'NSE LIB',
+		url: siteUrl
+	},
+	about: {
+		'@type': 'SoftwareApplication',
+		name: 'Nmap',
+		applicationCategory: 'SecurityApplication'
+	}
+};
 ---
 
 <Layout
 	title="NSE Library"
-	description="Search and browse official and unofficial Nmap NSE scripts in a static Astro library."
+	description="Search and browse official and unofficial Nmap NSE scripts in a static reference library."
+	ogType="website"
+	jsonLd={homeJsonLd}
 >
 	<div class="relative overflow-hidden">
 		<div class="absolute inset-x-0 top-0 -z-10 h-112 bg-[radial-gradient(circle_at_top,rgba(125,211,252,0.12),transparent_60%)]"></div>

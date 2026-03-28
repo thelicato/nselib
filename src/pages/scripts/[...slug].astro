@@ -36,11 +36,42 @@ const riskTone = {
 
 const sourceLabel = script.data.source === 'official' ? 'Official' : 'Unofficial';
 const hasUsage = script.data.usage.trim().length > 0;
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? 'https://www.nselib.com';
+const pageUrl = new URL(`/scripts/${script.id}/`, siteUrl).toString();
+const scriptJsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'TechArticle',
+	headline: script.data.title,
+	description: script.data.shortDescription,
+	url: pageUrl,
+	author: {
+		'@type': 'Organization',
+		name: script.data.author
+	},
+	isPartOf: {
+		'@type': 'WebSite',
+		name: 'NSE LIB',
+		url: siteUrl
+	},
+	about: [
+		{
+			'@type': 'DefinedTerm',
+			name: 'Nmap NSE'
+		},
+		...script.data.tags.map((tag) => ({
+			'@type': 'DefinedTerm',
+			name: tag
+		}))
+	],
+	mainEntityOfPage: pageUrl
+};
 ---
 
 <Layout
 	title={`${script.data.title} | NSE Library`}
 	description={script.data.shortDescription}
+	ogType="article"
+	jsonLd={scriptJsonLd}
 >
 	<div class="mx-auto max-w-7xl px-6 py-8 sm:px-8 lg:px-10">
 		<div class="flex justify-center">
