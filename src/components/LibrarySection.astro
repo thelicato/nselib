@@ -42,6 +42,10 @@ const { id, title, description, emptyMessage, scripts } = Astro.props;
 					<div
 						data-search-item
 						data-search-text={`${script.data.title} ${script.data.shortDescription} ${script.data.category} ${script.data.tags.join(' ')} ${script.data.source}`}
+						data-search-title={script.data.title}
+						data-search-description={script.data.shortDescription}
+						data-search-category={script.data.category}
+						data-search-tags={script.data.tags.join(' ')}
 						data-search-group={script.data.source}
 						data-visible="false"
 					>

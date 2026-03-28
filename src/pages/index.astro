@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import Fuse from 'fuse.js';
 
 import AppLogo from '../components/AppLogo.astro';
 import LibrarySection from '../components/LibrarySection.astro';
@@ -131,10 +132,21 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 		</main>
 	</div>
 
-	<script is:inline>
+	<script>
+		import Fuse from 'fuse.js';
+
 		const input = document.querySelector('#script-search');
 		const searchPanel = document.querySelector('#search-panel');
-		const items = Array.from(document.querySelectorAll('[data-search-item]'));
+		const items = Array.from(document.querySelectorAll('[data-search-item]')).map((item) => {
+			return {
+				element: item,
+				title: item.getAttribute('data-search-title') ?? '',
+				description: item.getAttribute('data-search-description') ?? '',
+				category: item.getAttribute('data-search-category') ?? '',
+				tags: (item.getAttribute('data-search-tags') ?? '').split(' ').filter(Boolean),
+				source: item.getAttribute('data-search-group') ?? ''
+			};
+		});
 		const sourceFilters = Array.from(document.querySelectorAll('[data-filter-source]'));
 		const resultsCount = document.querySelector('[data-results-count]');
 		const emptyState = document.querySelector('#search-empty');
@@ -143,6 +155,18 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 		const pageSize = 12;
 		let visibleLimit = pageSize;
 		let activeSource = 'all';
+		const fuse = new Fuse(items, {
+			includeScore: true,
+			threshold: 0.38,
+			ignoreLocation: true,
+			minMatchCharLength: 2,
+			keys: [
+				{ name: 'title', weight: 0.45 },
+				{ name: 'tags', weight: 0.25 },
+				{ name: 'category', weight: 0.15 },
+				{ name: 'description', weight: 0.15 }
+			]
+		});
 
 		const focusSearch = () => {
 			if (!(input instanceof HTMLInputElement)) {
@@ -160,15 +184,14 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 		};
 
 		const updateResults = () => {
-			const query = input instanceof HTMLInputElement ? input.value.trim().toLowerCase() : '';
+			const query = input instanceof HTMLInputElement ? input.value.trim() : '';
 			let matchingCount = 0;
 			let renderedCount = 0;
+			const matchedItems = query ? new Set(fuse.search(query).map((result) => result.item)) : null;
 
 			for (const item of items) {
-				const text = item.getAttribute('data-search-text')?.toLowerCase() ?? '';
-				const source = item.getAttribute('data-search-group') ?? '';
-				const matchesQuery = !query || text.includes(query);
-				const matchesSource = activeSource === 'all' || source === activeSource;
+				const matchesQuery = !matchedItems || matchedItems.has(item);
+				const matchesSource = activeSource === 'all' || item.source === activeSource;
 				const matches = matchesQuery && matchesSource;
 
 				if (matches) {
@@ -176,8 +199,8 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 				}
 
 				const shouldShow = matches && renderedCount < visibleLimit;
-				item.classList.toggle('hidden', !shouldShow);
-				item.setAttribute('data-visible', String(shouldShow));
+				item.element.classList.toggle('hidden', !shouldShow);
+				item.element.setAttribute('data-visible', String(shouldShow));
 
 				if (shouldShow) {
 					renderedCount += 1;
