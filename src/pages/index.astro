@@ -138,6 +138,10 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 		const sourceFilters = Array.from(document.querySelectorAll('[data-filter-source]'));
 		const resultsCount = document.querySelector('[data-results-count]');
 		const emptyState = document.querySelector('#search-empty');
+		const loadMoreButton = document.querySelector('#load-more');
+		const loadMoreContainer = document.querySelector('#load-more-container');
+		const pageSize = 12;
+		let visibleLimit = pageSize;
 		let activeSource = 'all';
 
 		const focusSearch = () => {
@@ -157,7 +161,8 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 
 		const updateResults = () => {
 			const query = input instanceof HTMLInputElement ? input.value.trim().toLowerCase() : '';
-			let visibleCount = 0;
+			let matchingCount = 0;
+			let renderedCount = 0;
 
 			for (const item of items) {
 				const text = item.getAttribute('data-search-text')?.toLowerCase() ?? '';
@@ -166,19 +171,30 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 				const matchesSource = activeSource === 'all' || source === activeSource;
 				const matches = matchesQuery && matchesSource;
 
-				item.classList.toggle('hidden', !matches);
-
 				if (matches) {
-					visibleCount += 1;
+					matchingCount += 1;
+				}
+
+				const shouldShow = matches && renderedCount < visibleLimit;
+				item.classList.toggle('hidden', !shouldShow);
+				item.setAttribute('data-visible', String(shouldShow));
+
+				if (shouldShow) {
+					renderedCount += 1;
 				}
 			}
 
 			if (resultsCount) {
-				resultsCount.textContent = String(visibleCount);
+				resultsCount.textContent = String(matchingCount);
 			}
 
 			if (emptyState) {
-				emptyState.classList.toggle('hidden', visibleCount !== 0);
+				emptyState.classList.toggle('hidden', matchingCount !== 0);
+			}
+
+			if (loadMoreContainer) {
+				loadMoreContainer.classList.toggle('hidden', matchingCount <= visibleLimit);
+				loadMoreContainer.classList.toggle('flex', matchingCount > visibleLimit);
 			}
 		};
 
@@ -213,6 +229,7 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 		for (const filter of sourceFilters) {
 			filter.addEventListener('click', () => {
 				activeSource = filter.getAttribute('data-filter-source') ?? 'all';
+				visibleLimit = pageSize;
 
 				for (const button of sourceFilters) {
 					const isActive = button === filter;
@@ -229,7 +246,15 @@ const unofficialScripts = scripts.filter((script) => script.data.source === 'uno
 			});
 		}
 
-		input?.addEventListener('input', updateResults);
+		loadMoreButton?.addEventListener('click', () => {
+			visibleLimit += pageSize;
+			updateResults();
+		});
+
+		input?.addEventListener('input', () => {
+			visibleLimit = pageSize;
+			updateResults();
+		});
 		updateResults();
 	</script>
 </Layout>

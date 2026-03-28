@@ -43,6 +43,7 @@ const { id, title, description, emptyMessage, scripts } = Astro.props;
 						data-search-item
 						data-search-text={`${script.data.title} ${script.data.shortDescription} ${script.data.category} ${script.data.tags.join(' ')} ${script.data.source}`}
 						data-search-group={script.data.source}
+						data-visible="false"
 					>
 						<ScriptCard
 							title={script.data.title}
@@ -63,4 +64,14 @@ const { id, title, description, emptyMessage, scripts } = Astro.props;
 			</div>
 		)
 	}
+
+	<div id="load-more-container" class="mt-8 hidden justify-center">
+		<button
+			type="button"
+			id="load-more"
+			class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-cyan-400/25 bg-cyan-400/12 px-5 py-3 text-sm font-medium text-cyan-100 transition hover:border-cyan-300/40 hover:bg-cyan-400/18 hover:text-white"
+		>
+			Load more
+		</button>
+	</div>
 </section>
